@@ -139,4 +139,65 @@ const logWeather2 = ({ date, weather }: {date: Date, weather: string}): void => 
 ===
 
 
-##
+## Mastering Typed Arrays 
+
+- typed Arrays => where each element is some consistent type of value (i.e. an array of strings only)
+  - we can use different types, but we need to be very explicit 
+- check out arrays.ts for more info
+
+
+===
+
+## Tuples in Typescript 
+
+- tuple => array-like structure where each element represents some property of a record 
+  - we have a fixed order/structure 
+- examples:
+````ts
+// inferred type below is string|bool|number[] => we can swap the order of these, but we dont want to
+// because it breaks data structure, no enforcement of order
+const pepsi = ['brown', true, 40] 
+
+// using a tuple:
+const pepsi2: [string, boolean, number] = ['brown', true, 40];
+// a better way (type alias):
+type Drink = [string, boolean, number]; // creates a new type that we can use wheenver we would need a type.
+// i.e.: 
+const pepsi3: Drink = ['brown', true, 40];
+````
+- when would we use a tuple? 
+  - not that often. 
+
+===
+
+
+## The All-Important Interface 
+
+- interfaces + classes = how we get really strong code reuse in TS 
+- interfaces => creates a new type, describing the property names and value types of an object
+````ts
+interface Vehicle {
+  name: string;
+  year: number;
+  broken: boolean;
+}
+
+// you must provide a Vehicle, which meets the specifications of the vehicle interface
+const printVehicle = (vehicle: Vehicle): void => {
+  console.log(`
+  Name: ${vehicle.name}, 
+  Year: ${vehicle.year}, 
+  Broken? ${vehicle.broken}
+  `);
+};
+````
+- Great to reuse interfaces if possible, and make them generic
+- general plan with interfaces:
+  - create functions that accept arguments that are typed with interfaces
+  - objects/classes can decide to 'implement' a given interface to work with a function
+
+
+  ===
+
+
+  ## Building Functionality with Classes
