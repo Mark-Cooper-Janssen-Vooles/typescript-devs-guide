@@ -201,3 +201,10 @@ const printVehicle = (vehicle: Vehicle): void => {
 
 
   ## Building Functionality with Classes
+
+  - classes => blueprint to create an object with some fields (values) and methods (functions) to represent a 'thing'
+  - we have access to inherit from classes and override the parents functions 
+  - we have access to public / private / protected modifiers 
+    - public => this method can be called anywhere, anytime (by default they are public)
+    - private => this method can only be called by other methods in this class
+    - protected => this method can be called by other methods in this class, or by other methods in child classes
