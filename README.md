@@ -75,5 +75,68 @@ axios.get(url).then(response => {
 
 ## Type Annotations in Action 
 
+- refer to features/annotations/variables.ts 
+
+
 - Type annotations: Code we add to tell typescript what type of value a variable will refer to (we tell typescript the type)
+  - i.e. ``let apples: number = 5``
+
+
 - Type inference: typescript tries to figure out what type of value a variable refers to (typescript guesses the type)
+  - i.e. ``let apples = 5`` => TS can infer what this type is
+  - if we do the declaration of the variable (const color) and the variable initialisation ( = red) on the same line, Typescript will figure out the type of 'color' for us 
+
+
+#### Variables: 
+- When to use annotations?
+  - When we declare a variable on one line then initialize it later
+  - When we want a variable to have a type that can't be inferred 
+  - When a function returns the 'any' type and we need to clarify the value
+    - any is a type, just like string and boolean
+    - ts has no idea what it is - so it loses its usefulness 
+    - avoid any at all cost 
+- When to use inference?
+  - Whenever we can, i.e. not one of the above 3 scenarios
+
+
+
+#### Functions: 
+- Type annotations for functions: Code we add to telp TS what type of arguments a function will receive and what type of values it will return
+````ts
+// this is annotation for a function (note how its all after variable has been assigned):
+const add = (a: number, b: number): number => {
+  return a + b;
+}
+
+// this is variable annotation: 
+const logNumber: (i: number) => void = (i) => {
+  console.log(i);
+}
+````
+- Any time we write a function, we will annotate it 
+  - we do not get any type inference for arguments 
+  - we do get type inference for the return of ra function, but we're not going to use it. We always will add annotations for the return (it makes our code safer)
+- Special note on destructuring syntax: 
+````ts
+// before:
+const logWeather = (forecast: { date: Date, weather: string }): void => {
+  console.log(forecast.date);
+  console.log(forecast.weather);
+};
+
+//after:
+const logWeather2 = ({ date, weather }: {date: Date, weather: string}): void => {
+  console.log(date);
+  console.log(weather);
+}; 
+````
+
+#### Objects: 
+
+- pretty much the same as functions. 
+
+
+===
+
+
+##
