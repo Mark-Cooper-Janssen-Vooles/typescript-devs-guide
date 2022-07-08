@@ -12,6 +12,7 @@ Contents:
 - [Design Patterns with Typescript](#design-patterns-with-typescript)
 - [More on Design Patterns](#more-on-design-patterns) 
 - [Reusable Code](#reusable-code)
+  - enums
 - Advanced Generics 
 - Let's build a Web Framework 
 - Express + Typescript Integration
@@ -385,3 +386,33 @@ Inheritance / Abstract classes:
 ===
 
 ## Reusable Code
+
+#### Enums 
+
+- follow near-identical syntax rules as normal objects
+- creates an object with the same keys and values when converted from TS to JS
+- primary goal is to signal to other engineers that these are all closely related values
+- use whenever we have a small fixed set of values that are all closely related and known at compile time
+
+````ts
+// object way
+const MatchResult = {
+  HomeWin: 'H',
+  AwayWin: 'A',
+  Draw: 'D'
+};
+// enum way, does the same thing but its better communicates what it is:
+enum MatchResult {
+  HomeWin = 'H',
+  AwayWin = 'A',
+  Draw = 'D'
+};
+````
+
+when an enum goes into the compiler and goes from ts to js, it actually becomes an object. 
+
+
+
+=> next time when i start this, might be better to skip to 117 "creating abstract classes", watch 117 to 129 (Watch only, don't code)
+=> then go to "Advanced Generics" section. 
+=> then skip to "React and Redux with typescript" section, and finish course
