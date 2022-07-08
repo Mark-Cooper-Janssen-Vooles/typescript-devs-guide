@@ -2,17 +2,16 @@
 
 
 Contents: 
-- Typescript Overview
-- What is a type system?
-- Type annotations in action
-- Annotations with Functions and Objects
-- Mastering Typed Arrays 
-- Tuples in Typescript 
-- The All-important Interface
-- Building Functionality with Classes 
-- Design Patterns with Typescript 
-- More on Design Patterns 
-- Reusable Code 
+- [Typescript Overview](#typescript-overview)
+- [What is a type system?](#what-is-a-type-system)
+- [Type annotations in action](#type-annotations-in-action)
+- [Mastering Typed Arrays](#mastering-typed-arrays)
+- [Tuples in Typescript](#tuples-in-typescript)
+- [The All-important Interface](#the-all-important-interface)
+- [Building Functionality with Classes](#building-functionality-with-classes)
+- [Design Patterns with Typescript](#design-patterns-with-typescript)
+- [More on Design Patterns](#more-on-design-patterns) 
+- [Reusable Code](#reusable-code)
 - Advanced Generics 
 - Let's build a Web Framework 
 - Express + Typescript Integration
@@ -200,11 +199,189 @@ const printVehicle = (vehicle: Vehicle): void => {
   ===
 
 
-  ## Building Functionality with Classes
+## Building Functionality with Classes
 
-  - classes => blueprint to create an object with some fields (values) and methods (functions) to represent a 'thing'
-  - we have access to inherit from classes and override the parents functions 
-  - we have access to public / private / protected modifiers 
-    - public => this method can be called anywhere, anytime (by default they are public)
-    - private => this method can only be called by other methods in this class
-    - protected => this method can be called by other methods in this class, or by other methods in child classes
+- classes => blueprint to create an object with some fields (values) and methods (functions) to represent a 'thing'
+- we have access to inherit from classes and override the parents functions 
+- we have access to public / private / protected modifiers 
+  - public => this method can be called anywhere, anytime (by default they are public)
+  - private => this method can only be called by other methods in this class
+  - protected => this method can be called by other methods in this class, or by other methods in child classes
+
+
+Interfaces + Classes = How we get really strong code reuse in TS 
+
+
+===
+
+
+## Design Patterns with Typescript 
+
+
+Building an App with typescript design patterns 
+`npm install -g parcel-bundler` => used to help run typescript in the browser 
+we'll have an index.html file, with a script of 'index.ts' => we can't have .ts files run in the browser, so parcel bundler sees this and compiles it to JS and replaces the tag.
+
+`npm install faker@5.5.3 @types/faker@5.5.9`
+The @types/faker is a 'type definition file' - a kind of adapater between the JS library and our use of typescript. 
+Sometimes they are installed automatically when you install a JS library - but faker does not. 
+Type definition files are publicly available - something like @types/{library name}
+
+We'll create a 'CustomMap' class to limit our interactions with google map, so it can't be broken elsewhere in the application.
+In index.ts file, we only want to be able to:
+- Create a company, referance name / slogan / lat / lng
+- Create a user, reference name / age / lat / lng
+- Create a map, addMarker
+
+The outcome of the "design pattern" in this project was to use an interface, ``mappable`` which was shared by multiple classes. Also adding ``class User implements Mappable`` to the classes adds value to typescript of where the error originates, however it is not essential. 
+
+===
+
+### More on design patterns 
+
+
+#### Concurrent compliation and Execution 
+
+- if we run `tsc index.ts` in the terminal, typescript compiles our index.ts file into an index.js file 
+- if we run `tsc --init` typescript generates a tsconfig.json file, and we can change the outDir and rootDir to whatever we want, lets say ./build and ./src 
+- we can then run `tsc -w` from the root, and it auto-compiles
+- we can then run, in a new terminal, `node ./build/index.js` and it runs the js file
+- we can automate this with some libraries, `npm install nodemon concurrently` (nodemon executes our code once it has been compiled), concurrently lets us run multiple scripts at the same time (the compiler tsc -w and nodemon itself)
+- we can write our scripts like so:
+````ts
+  "scripts": {
+    "start:build": "tsc -w",
+    "start:run": "nodemon build/index.js",
+    "start": "concurrently npm:start:*"
+  },
+````
+
+
+#### Type Guards
+
+A check on the type - it clarifies the type of value we are working with. 
+``if (this.collection instanceof Array) {`` if we wrap our code in this, typescript knows that we'll have an array inside this if - and it will give us access to all the array methods.
+
+````ts
+if (typeof this.collection === 'string') {
+  this.collection. //you now get properties assoiated with a string
+}
+````
+
+two typeguards
+- typeof => narrow type of a value for a primitive value: number | string | boolean | symbol
+- instanceof => narrow down every other type of value: object | array | anything else
+
+
+#### Design Patterns #2
+
+If you can abstract an interface which two classes can implement, you should. This is better than using typeguards
+
+````ts
+
+// BAD Way:
+export class Sorter {
+  collection: string | []; // or something else, could be endless
+
+  constructor(collection: string | []) {
+    this.collection = collection;
+  }
+
+  sort(): void {
+    for (let i = 0; i < this.collection.length; i++) {
+      for (let j = 0; j < this.collection.length -i - 1; j++) {
+
+        // if number array
+        if (this.collection instanceof Array) {
+          if (/* if number on right greater than left array logic*/) {
+            // logic for swapping numbers 
+          }
+        }
+
+        // if string
+        if (typeof this.collection === 'string') {
+          // string swapping logic
+        }
+      }
+    }
+  }
+}
+
+// GOOD way: make another class called "NumbersCollection" or "CharactersCollection" or whatever, which satisfies having a length, compare and swap methods.
+export interface Sortable {
+  length: number;
+  compare(leftIndex: number, rightIndex: number): boolean;
+  swap(leftIndex: number, rightIndex: number): void;
+}
+
+export class Sorter {
+  collection: Sortable; // collection needs a length, a way to compare, a way to swap. you just need these 3 thngs. 
+
+  constructor(collection: Sortable) {
+    this.collection = collection;
+  }
+
+  sort(): void {
+    for (let i = 0; i < this.collection.length; i++) {
+      for (let j = 0; j < this.collection.length -i - 1; j++) {
+        if (this.collection.compare(j, j+1)) {
+          this.collection.swap(j, j+1)
+        }
+
+      }
+    }
+  }
+}
+
+// NumbersCollection.ts could have something like: 
+import { Sortable } from "./Sorter";
+
+export class NumbersCollection implements Sortable { // forces it to have length, compare, swap, and complain locally if it doesn't.
+}
+````
+
+Interfaces are useful because we can set up a contract between one class and another class.
+
+
+#### Abstract Classes 
+
+- Can't be used to create an object directly
+- Only used as a parent class
+- Can contain real implementation for some methods
+- The implemented methods can refer to other methods that don't actually exist yet 
+- Can make child classes promise to implement some other method 
+
+````ts
+export abstract class Sorter {
+  abstract compare(leftIndex: number, rightIndex: number): boolean;
+  abstract swap(leftIndex: number, rightIndex: number): void;
+  abstract length: number;
+
+  sort(): void {
+    for (let i = 0; i < this.collection.length; i++) {
+      for (let j = 0; j < this.collection.length -i - 1; j++) {
+        if (this.collection.compare(j, j+1)) {
+          this.collection.swap(j, j+1)
+        }
+      }
+    }
+  }
+}
+````
+
+#### Design Patterns #3
+
+Interfaces:
+- sets up a contract between different classes 
+- Use when we have very different objects that we want to work together
+- Promotes loose coupling
+
+Inheritance / Abstract classes:
+- Sets up a contract between different classes
+- Use when we are trying to build up a definition of an object
+- Strongly couples classes together 
+
+
+===
+
+## Reusable Code
