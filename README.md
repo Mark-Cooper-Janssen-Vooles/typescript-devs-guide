@@ -13,13 +13,12 @@ Contents:
 - [More on Design Patterns](#more-on-design-patterns) 
 - [Reusable Code](#reusable-code)
   - enums
-- Advanced Generics 
-- Let's build a Web Framework 
-- Express + Typescript Integration
-- Decorators 
-- Advanced Express and TS Integration 
-- React and Redux with Typescript 
-- Extras 
+- [Advanced Generics](#advanced-generics)
+- ~~Let's build a Web Framework~~ 
+- ~~Express + Typescript Integration~~
+- ~~Decorators~~ 
+- ~~Advanced Express and TS Integration~~ 
+- [React and Redux with Typescript](#reactredux--typescript)
 
 
 ## Typescript Overview
@@ -409,9 +408,121 @@ enum MatchResult {
 };
 ````
 
+
 when an enum goes into the compiler and goes from ts to js, it actually becomes an object. 
 
 
+===
+
+
+## Advanced Generics 
+
+(in features / generics.ts)
+
+
+````ts
+class ArrayOfNumbers {
+    constructor(public collection: number[]) {}
+
+    get(index: number): number {
+        return this.collection[index];
+    }
+}
+
+class ArrayOfStrings {
+    constructor(public collection: string[]) {}
+
+    get(index: number): string {
+        return this.collection[index];
+    }
+}
+
+// think of T as "just like an argument"
+class ArrayOfAnything<T> {
+    constructor(public collection: T[]) {}
+
+    get(index: number): T {
+        return this.collection[index];
+    }
+}
+
+// see the usage here, works the same as 'ArrayOfStrings': 
+new ArrayOfAnything<string>(['a', 'b', 'c']);
+````
+
+
+if you delete the generic `<string>` in the above, it works out fine - TS infers the value 
+
+you can use generics with functions too. 
+
+````ts
+// example of generics with functions 
+
+function printStrings(arr: string[]): void {
+    for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i]);
+    }
+}
+
+function printNumbers(arr: number[]) {
+    for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i]);
+    }
+}
+
+// 100% code duplication between the above two functions, so can use a generic 
+function printAnything<T>(arr: T[]): void {
+    for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i]);
+    }
+}
+
+printAnything<string>(['a', 'b']) // we can put it in 
+printAnything([1, 2]) // here it infers its a number. he recommends we add the type in though, it will help catch errors.
+````
+
+Generic Constraints: 
+
+````ts
+
+// generic constraints 
+
+class Car {
+    print() {
+        console.log('i am a car')
+    }
+}
+
+class House {
+    print() {
+        console.log('i am a house')
+    }
+}
+
+// function printHousesOrCars<T>(arr: T[]): void {
+//     for (let i = 0; i < arr.length; i++) {
+//         arr[i].print(); // this errors because not everything thats an array has a .print method 
+//     }
+// }
+
+interface Printable {
+    print(): void;
+}
+
+function printHousesOrCars<T extends Printable>(arr: T[]): void {
+    for (let i = 0; i < arr.length; i++) {
+        arr[i].print(); 
+    }
+}
+
+// printHousesOrCars([1,2,3]); // now this errors, ts tells us it doesn't satisfy extending printable. 
+
+printHousesOrCars<House>([new House(), new House()]);
+````
+
+===
+
+## React/Redux + Typescript
 
 => next time when i start this, might be better to skip to 117 "creating abstract classes", watch 117 to 129 (Watch only, don't code)
 => then go to "Advanced Generics" section. 
