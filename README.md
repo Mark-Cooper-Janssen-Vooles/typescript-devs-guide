@@ -604,4 +604,140 @@ class App extends React.Component<AppProps, AppState> {
 }
 ````
 
-#### 
+#### Functional Components
+
+basic example:
+````tsx
+interface AppProps {
+    color?: string;
+}
+
+const App = (props: AppProps): JSX.Element => {
+  return <div>{props.color}</div>
+}
+````
+
+
+#### Redux Setup
+
+need redux, react-redux, axios
+`npm install redux react-redux axios redux-thunk`
+
+One of the hardest things about getting react, redux and typescript to play nicely together is imports of types. 
+
+````ts
+import { Dispatch } from 'redux'; // this is the type for dispatch
+
+export const fetchTodos = () => {
+    return (dispatch: Dispatch) => {
+
+    }
+}
+````
+
+#### Action Creators with Typescript 
+
+The below is a perfectly fine ts file, but we don't have much type safety. there are lots of "any" (i.e. the response type)
+````ts
+import axios from 'axios';
+import { Dispatch } from 'redux';
+
+const url = 'https://jsonplaceholder.typicode.com/todos'
+
+export const fetchTodos = () => {
+    return async (dispatch: Dispatch) => {
+        const response = await axios.get(url);
+
+        dispatch({
+            type: 'FETCH_TODOS',
+            payload: response.data
+        })
+    }
+}
+````
+
+#### Response Type and Action Types Enum
+
+````ts
+import axios from 'axios';
+import { Dispatch } from 'redux';
+import { ActionTypes } from './types'
+
+// we have the response type here
+interface Todo {
+    id: number;
+    title: string;
+    completed: boolean;
+}
+
+const url = 'https://jsonplaceholder.typicode.com/todos'
+
+export const fetchTodos = () => {
+    return async (dispatch: Dispatch) => {
+        const response = await axios.get<Todo[]>(url); // we pass that into the generic here
+
+        dispatch({
+            type: ActionTypes.fetchTodos, // this comes from types below
+            payload: response.data
+        })
+    }
+}
+
+// types file looks like this:
+export enum ActionTypes {
+    fetchTodos = 'FETCH_TODOS'
+}
+````
+
+``
+
+#### The Generic Dispatch Function 
+
+The below code passes in the non-generic type expected to be receieved by dispatch.
+
+Why? sometimes when we work on an action creator, we can have lots of code. It can be confusing to know what we're doing. 
+
+This generic type makes sure we're always passing in the object with the correct types and properties. 
+
+````ts
+interface FetchTodosAction {
+    type: ActionTypes.fetchTodos;
+    payload: Todo[];
+}
+
+const url = 'https://jsonplaceholder.typicode.com/todos'
+
+export const fetchTodos = () => {
+    return async (dispatch: Dispatch) => {
+        const response = await axios.get<Todo[]>(url);
+
+        dispatch<FetchTodosAction>({
+            type: ActionTypes.fetchTodos,
+            payload: response.data
+        })
+    }
+}
+````
+
+#### A reducer with Enums 
+
+````ts
+import { FetchTodosAction, Todo } from '../actions/actions';
+import { ActionTypes } from '../actions/types';
+
+export const todosReducer = (
+	state: Todo[] = [],  // default state is an empty array
+	action: FetchTodosAction
+) => {
+	switch (action.type) {
+		case ActionTypes.fetchTodos:
+			return action.payload;
+		default:
+			return state;
+	}
+}
+````
+
+===
+
+upto 273 (do all of this section)
