@@ -524,6 +524,84 @@ printHousesOrCars<House>([new House(), new House()]);
 
 ## React/Redux + Typescript
 
-=> next time when i start this, might be better to skip to 117 "creating abstract classes", watch 117 to 129 (Watch only, don't code)
-=> then go to "Advanced Generics" section. 
-=> then skip to "React and Redux with typescript" section, and finish course
+Pros:
+- Far, far easier to avoid extremely common typos, like incorrect action types 
+- Gives dev's a far better understanding of the type of data flowing around 
+- Much easier to refactor just about anything 
+
+Cons:
+- Not the best type definition files (especially around redux)
+- Tons of generics flying around (more in redux than react)
+- Tons of imports, as just about everything (action creator, action, reducer, store, component) need to be aware of different types 
+- Redux inherently functional in nature, tough integration with TS classes
+
+redux.js.org/recipes/usage-with-typescript 
+=> he doesn't love some recommendations 
+
+#### Generating the App
+
+=> `npx create-react-app rrts --template typescript`
+
+#### Simple components 
+
+a .tsx file is a typescript file that also contains a react element (normally jsx). 
+
+#### Interfaces With Props 
+
+You'll need to define the component, an interface right above it, and pass the props down to the component. 
+
+````tsx
+interface AppProps {
+    color: string;
+}
+
+class App extends React.Component<AppProps> {
+    render() {
+        return <div>{this.props.color}</div>
+    }
+}
+
+ReactDOM.render(<App color="red" />, document.querySelector('#root'));
+````
+
+#### Component State in a class Component 
+
+````tsx
+interface AppProps {
+    color?: string;
+}
+
+interface AppState {
+  counter: number;
+}
+
+class App extends React.Component<AppProps, AppState> {
+    constructor(props: AppProps) {
+        super(props);
+        this.state = { counter: 0 }
+    }
+
+    state = { counter: 0 }
+
+    onIncrement = (): void => {
+        this.setState({ counter: this.state.counter + 1 })
+    }
+
+    onDecrement = (): void => {
+        this.setState({ counter: this.state.counter - 1 })
+    }
+
+
+    render() {
+        return (
+            <div>
+                <button onClick={this.onIncrement}>Increment</button>
+                <button onClick={this.onDecrement}>Decremenet</button>
+                {this.state.counter}
+            </div>
+        )
+    }
+}
+````
+
+#### 
