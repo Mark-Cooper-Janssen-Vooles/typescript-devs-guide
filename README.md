@@ -794,11 +794,3 @@ export const App = connect(
 #### Imports
 
 He uses an index.ts file in the "actions" folder, and ``export * from './x';`` so that other files just have one source of import, which tidys things up. 
-
-
-
-
-
-===
-
-upto 273 (do all of this section)
