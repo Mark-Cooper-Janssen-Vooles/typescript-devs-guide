@@ -738,6 +738,67 @@ export const todosReducer = (
 }
 ````
 
+
+===
+
+
+#### Validating store structure 
+
+In the below example, typescript is making sure the combineReducers function is returning something with the same structure as StoreState. We need to add this manually to be able to catch this error! 
+
+````ts
+export interface StoreState {
+    todos: Todo[]
+}
+
+export const reducers = combineReducers<StoreState>({
+    todos: todosReducer
+})
+````
+
+StoreState now becomes a living document - we can see this interface and immediately understand all the data that exists in our redux store. 
+
+
+===
+
+
+### Connecting a Component to Redux
+
+````tsx
+interface AppProps {
+    todos: Todo[];
+    fetchTodos(): any;
+}
+
+// called this _App so connected component below didnt need to be default 
+// said "we dont use default exports in typescript" hmm
+class _App extends React.Component<AppProps> {
+    render() {
+        return <div>hi there!</div>
+    }
+}
+
+const mapStateToProps = (state: StoreState): { todos: Todo[]} => {
+    return { todos: state.todos };
+}
+
+export const App = connect(
+    mapStateToProps,
+    { fetchTodos }
+)(_App);
+````
+
+===
+
+
+#### Imports
+
+He uses an index.ts file in the "actions" folder, and ``export * from './x';`` so that other files just have one source of import, which tidys things up. 
+
+
+
+
+
 ===
 
 upto 273 (do all of this section)

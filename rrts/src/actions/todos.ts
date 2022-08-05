@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Action, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import { ActionTypes } from './types'
 
 export interface Todo {
@@ -11,6 +11,11 @@ export interface Todo {
 export interface FetchTodosAction {
     type: ActionTypes.fetchTodos;
     payload: Todo[];
+}
+
+export interface DeleteTodoAction {
+    type: ActionTypes.deleteTodo;
+    payload: number;
 }
 
 const url = 'https://jsonplaceholder.typicode.com/todos'
@@ -25,3 +30,10 @@ export const fetchTodos = () => {
         })
     }
 }
+
+export const deleteTodo = (id: number): DeleteTodoAction => {
+    return {
+        type: ActionTypes.deleteTodo,
+        payload: id
+    };
+};
